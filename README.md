@@ -67,6 +67,16 @@ npm install vueify --save-dev
 browserify -t vueify -e src/main.js -o build/build.js
 ```
 
+If you are using npm 3+, it no longer auto install the peer dependencies. So you will also have to do:
+
+``` bash
+npm install\
+  vueify-insert-css vue-hot-reload-api\
+  babel-core babel-preset-es2015\
+  babel-plugin-transform-runtime babel-runtime@5\
+  --save-dev
+```
+
 And this is all you need to do in your main entry file:
 
 ``` js
@@ -117,19 +127,16 @@ The default Babel (6) options used for Vue.js components are:
 }
 ```
 
-If you wish to override this, you can add a `vue.config.js` and configure the option for `babel`:
+If you wish to override this, you can add a `.babelrc` file at the root of your project:
 
-``` js
-// vue.config.js
-module.exports = {
-  babel: {
-    // enable stage 0 transforms.
-    // make sure to install babel-presets-stage-0
-    presets: ['es2015', 'stage-0'],
-    plugins: ['transform-runtime']
-  }
+``` json
+{
+  "presets": ["es2015", "stage-2"],
+  "plugins": ["transform-runtime"]
 }
 ```
+
+You can also configure babel with the `babel` field in `vue.config.js`, which will take the highest priority.
 
 ## Enabling Pre-Processors
 
@@ -166,6 +173,11 @@ module.exports = {
   // configure autoprefixer
   autoprefixer: {
     browsers: ['last 2 versions']
+  },
+  // configure html minification in production mode
+  // see https://github.com/kangax/html-minifier#options-quick-reference
+  htmlMinifier: {
+    // ...
   },
   // register custom compilers
   customCompilers: {
@@ -274,7 +286,7 @@ compiler.compile(fileContent, filePath, function (err, result) {
 
 ## Syntax Highlighting
 
-And here's a [SublimeText package](https://github.com/vuejs/vue-syntax-highlight) for enabling language highlighting/support in these embbeded code blocks.
+Currently there are syntax highlighting support for [Sublime Text](https://github.com/vuejs/vue-syntax-highlight), [Atom](https://atom.io/packages/language-vue), [Vim](https://github.com/posva/vim-vue), [Visual Studio Code](https://marketplace.visualstudio.com/items/liuji-jim.vue) and [Brackets](https://github.com/pandao/brackets-vue). Contributions for other editors/IDEs are highly appreciated! If you are not using any pre-processors in Vue components, you can also get by by treating `*.vue` files as HTML in your editor.
 
 ## Example
 
@@ -283,6 +295,24 @@ For an example setup using most of the features mentioned above, see [vuejs/vuei
 If you use Webpack, there's also [vue-loader](https://github.com/vuejs/vue-loader) that does the same thing.
 
 ## Changelog
+
+### 8.3.0
+
+- Added compile-time template syntax validation that catches common errors.
+- Code blocks with base indents are now de-indented before being processed.
+
+### 8.2.0
+
+- Added `htmlMinifier` option in config that allows configuration of HTML minification in production mode.
+- Fixed HTML minification removing `type` attribute for `<input type="text">`.
+
+### 8.1.0
+
+- Vueify now respects `.babelrc` over default options.
+
+### 8.0.0
+
+- `babel-core` is now a peer dependency.
 
 ### 7.0.0
 
